@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - MediCart{% endblock %}
+
+{% block content %}
+<h1>Welcome to MediCart</h1>
+<p style="font-size: 18px; margin-bottom: 30px;">Your trusted online pharmacy management system</p>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Medicines</div>
+        <div class="stat-number">{{ medicine_count }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-number">{{ order_count }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-label">Low Stock Items</div>
+        <div class="stat-number">{{ low_stock_count }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-label">Pending Orders</div>
+        <div class="stat-number">{{ pending_orders }}</div>
+    </div>
+</div>
+
+<div style="margin-top: 40px;">
+    <h2>Quick Actions</h2>
+    <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+        <a href="{% url 'medicine_add' %}" class="btn btn-success">Add New Medicine</a>
+        <a href="{% url 'order_place' %}" class="btn btn-success">Place New Order</a>
+        <a href="{% url 'medicine_list' %}" class="btn">View All Medicines</a>
+        <a href="{% url 'order_list' %}" class="btn">View All Orders</a>
+    </div>
+</div>
+
+<div style="margin-top: 40px;">
+    <h2>API Endpoints</h2>
+    <p>Access our RESTful API at:</p>
+    <ul style="margin-top: 15px; line-height: 2;">
+        <li><strong>Medicines API:</strong> <a href="/api/medicines/" style="color: #667eea;">/api/medicines/</a></li>
+        <li><strong>Orders API:</strong> <a href="/api/orders/" style="color: #667eea;">/api/orders/</a></li>
+        <li><strong>API Browser:</strong> <a href="/api/" style="color: #667eea;">/api/</a></li>
+    </ul>
+</div>
+{% endblock %}
+

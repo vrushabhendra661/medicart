@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Place Order - MediCart{% endblock %}
+
+{% block content %}
+<h1>Place New Order</h1>
+
+{% if medicines %}
+<form method="post" style="max-width: 600px;">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="customer_name">Customer Name *</label>
+        <input type="text" id="customer_name" name="customer_name" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="medicine">Select Medicine *</label>
+        <select id="medicine" name="medicine" required onchange="updateMedicineInfo()">
+            <option value="">-- Select a Medicine --</option>
+            {% for medicine in medicines %}
+                <option value="{{ medicine.id }}" 
+                        data-price="{{ medicine.price }}" 
+                        data-stock="{{ medicine.stock }}">
+                    {{ medicine.name }} - ${{ medicine.price }} (Stock: {{ medicine.stock }})
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="quantity">Quantity *</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="1" required oninput="calculateTotal()">
+        <small id="stock-info" style="color: #666; display: block; margin-top: 5px;"></small>
+    </div>
+    
+    <div class="form-group">
+        <label>Total Price</label>
+        <div id="total-price" style="font-size: 24px; font-weight: bold; color: #667eea;">$0.00</div>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 30px;">
+        <button type="submit" class="btn btn-success">Place Order</button>
+        <a href="{% url 'order_list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+<script>
+function updateMedicineInfo() {
+    const select = document.getElementById('medicine');
+    const selectedOption = select.options[select.selectedIndex];
+    const stock = selectedOption.getAttribute('data-stock');
+    const stockInfo = document.getElementById('stock-info');
+    const quantityInput = document.getElementById('quantity');
+    
+    if (stock) {
+        stockInfo.textContent = `Available stock: ${stock} units`;
+        quantityInput.max = stock;
+        quantityInput.value = Math.min(quantityInput.value, stock);
+    } else {
+        stockInfo.textContent = '';
+        quantityInput.max = '';
+    }
+    
+    calculateTotal();
+}
+
+function calculateTotal() {
+    const select = document.getElementById('medicine');
+    const selectedOption = select.options[select.selectedIndex];
+    const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+    const quantity = parseInt(document.getElementById('quantity').value) || 0;
+    const total = price * quantity;
+    
+    document.getElementById('total-price').textContent = `$${total.toFixed(2)}`;
+}
+</script>
+
+{% else %}
+<div class="card">
+    <div class="alert alert-warning">
+        No medicines available in stock. Please <a href="{% url 'medicine_add' %}">add medicines</a> first.
+    </div>
+    <a href="{% url 'medicine_add' %}" class="btn btn-success">Add Medicine</a>
+</div>
+{% endif %}
+{% endblock %}
+

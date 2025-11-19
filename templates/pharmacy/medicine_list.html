@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Medicines - MediCart{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>All Medicines</h1>
+    <a href="{% url 'medicine_add' %}" class="btn btn-success">Add New Medicine</a>
+</div>
+
+{% if medicines %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicine in medicines %}
+        <tr>
+            <td>{{ medicine.id }}</td>
+            <td><strong>{{ medicine.name }}</strong></td>
+            <td>{{ medicine.description|truncatewords:10 }}</td>
+            <td>${{ medicine.price }}</td>
+            <td>{{ medicine.stock }}</td>
+            <td>{{ medicine.expiry_date }}</td>
+            <td>
+                {% if medicine.is_in_stock %}
+                    <span class="badge badge-success">In Stock</span>
+                {% else %}
+                    <span class="badge badge-danger">Out of Stock</span>
+                {% endif %}
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <a href="{% url 'medicine_edit' medicine.id %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'medicine_delete' medicine.id %}" class="btn btn-danger">Delete</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+{% if medicines.has_other_pages %}
+<div class="pagination">
+    {% if medicines.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ medicines.previous_page_number }}">Previous</a>
+    {% endif %}
+    
+    <span class="current">Page {{ medicines.number }} of {{ medicines.paginator.num_pages }}</span>
+    
+    {% if medicines.has_next %}
+        <a href="?page={{ medicines.next_page_number }}">Next</a>
+        <a href="?page={{ medicines.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <p style="text-align: center; font-size: 18px;">No medicines available. <a href="{% url 'medicine_add' %}">Add your first medicine</a></p>
+</div>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} - MediCart{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>Order #{{ order.id }}</h1>
+    <a href="{% url 'order_list' %}" class="btn btn-secondary">Back to Orders</a>
+</div>
+
+<div class="card" style="max-width: 700px;">
+    <h2>Order Details</h2>
+    
+    <div style="margin-top: 20px;">
+        <p style="margin-bottom: 15px;">
+            <strong>Customer Name:</strong> {{ order.customer_name }}
+        </p>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Medicine:</strong> {{ order.medicine.name }}
+        </p>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Quantity:</strong> {{ order.quantity }}
+        </p>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Unit Price:</strong> ${{ order.medicine.price }}
+        </p>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Total Price:</strong> <span style="font-size: 20px; color: #667eea;">${{ order.total_price }}</span>
+        </p>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Order Date:</strong> {{ order.order_date|date:"F d, Y H:i" }}
+        </p>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Status:</strong> 
+            {% if order.status == 'Pending' %}
+                <span class="badge badge-warning">{{ order.status }}</span>
+            {% elif order.status == 'Processing' %}
+                <span class="badge badge-info">{{ order.status }}</span>
+            {% elif order.status == 'Shipped' %}
+                <span class="badge badge-info">{{ order.status }}</span>
+            {% elif order.status == 'Delivered' %}
+                <span class="badge badge-success">{{ order.status }}</span>
+            {% elif order.status == 'Cancelled' %}
+                <span class="badge badge-danger">{{ order.status }}</span>
+            {% else %}
+                <span class="badge badge-secondary">{{ order.status }}</span>
+            {% endif %}
+        </p>
+    </div>
+    
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <h3>Medicine Information</h3>
+        <p style="margin-top: 15px;"><strong>Description:</strong> {{ order.medicine.description }}</p>
+        <p><strong>Current Stock:</strong> {{ order.medicine.stock }}</p>
+        <p><strong>Expiry Date:</strong> {{ order.medicine.expiry_date }}</p>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 30px;">
+        <a href="{% url 'order_update_status' order.id %}" class="btn">Update Status</a>
+        <a href="{% url 'order_list' %}" class="btn btn-secondary">Back to Orders</a>
+    </div>
+</div>
+{% endblock %}
+
